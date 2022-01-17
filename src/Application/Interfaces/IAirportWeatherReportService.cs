@@ -4,7 +4,7 @@ using Domain.Entities;
 
 namespace Application.Interfaces
 {
-    public interface IAirportWeatherReport
+    public interface IAirportWeatherReportService
     {
         Task<AirportWeatherReport> Get(string ICAO);
     }

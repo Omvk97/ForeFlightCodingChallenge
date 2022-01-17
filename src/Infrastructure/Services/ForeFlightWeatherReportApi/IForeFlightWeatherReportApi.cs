@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Application.Interfaces;
+using Infrastructure.Services.ForeFlightWeatherReportApi;
 using Refit;
 
 namespace Infrastructure.Services
@@ -8,6 +8,6 @@ namespace Infrastructure.Services
     {
         [Get("/weather/report/{icao}")]
         [Headers("ff-coding-exercise: 1")]
-        Task<
+        Task<ForeFlightAirportWeatherReport> GetWeatherReport(string icao);
     }
 }

@@ -1,13 +1,17 @@
-using Xunit;
+using NUnit.Framework;
 
 namespace Domain.UnitTests
 {
-    public class UnitTest1
+    public class Tests
     {
-        [Fact]
-        public void ShouldThrowWithNullFields()
+        // TODO: Ensure domain entities act as they should (we don't really have anything worthwhile to test in this project)
+        [SetUp]
+        public void Setup() { }
+
+        [Test]
+        public void Test1()
         {
-            
+            Assert.Pass();
         }
     }
 }

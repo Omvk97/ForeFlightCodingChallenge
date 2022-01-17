@@ -1,11 +1,19 @@
-using System;
-using Xunit;
+using NUnit.Framework;
 
 namespace Application.IntegrationTests
 {
-    public class UnitTest1
+    public class Tests
     {
-        [Fact]
-        public void Test1() { }
+        [SetUp]
+        public void Setup()
+        {
+        }
+        
+        // TODO: Test validation logic
+        [Test]
+        public void Test1()
+        {
+            Assert.Pass();
+        }
     }
 }

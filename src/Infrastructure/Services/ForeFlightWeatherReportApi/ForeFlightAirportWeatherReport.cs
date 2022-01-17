@@ -1,18 +1,15 @@
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Infrastructure.Services.ForeFlightWeatherReportApi
 {
-    public partial class ForeFlightAirportWeatherReport
+    public class ForeFlightAirportWeatherReport
     {
         [JsonProperty("report")]
         public Report Report { get; set; }
     }
 
-    public partial class Report
+    public class Report
     {
         [JsonProperty("conditions")]
         public Conditions Conditions { get; set; }
@@ -24,7 +21,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public ReportWindsAloft WindsAloft { get; set; }
     }
 
-    public partial class Conditions
+    public class Conditions
     {
         [JsonProperty("text")]
         public string Text { get; set; }
@@ -42,13 +39,13 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public double Lon { get; set; }
 
         [JsonProperty("elevationFt")]
-        public long ElevationFt { get; set; }
+        public double ElevationFt { get; set; }
 
         [JsonProperty("tempC")]
-        public long TempC { get; set; }
+        public double TempC { get; set; }
 
         [JsonProperty("dewpointC")]
-        public long DewpointC { get; set; }
+        public double DewpointC { get; set; }
 
         [JsonProperty("pressureHg")]
         public double PressureHg { get; set; }
@@ -57,7 +54,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public long DensityAltitudeFt { get; set; }
 
         [JsonProperty("relativeHumidity")]
-        public long RelativeHumidity { get; set; }
+        public int RelativeHumidity { get; set; }
 
         [JsonProperty("flightRules")]
         public string FlightRules { get; set; }
@@ -78,19 +75,19 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public Wind Wind { get; set; }
     }
 
-    public partial class CloudLayer
+    public class CloudLayer
     {
         [JsonProperty("coverage")]
-        public Coverage Coverage { get; set; }
+        public string Coverage { get; set; }
 
         [JsonProperty("altitudeFt")]
-        public long AltitudeFt { get; set; }
+        public double AltitudeFt { get; set; }
 
         [JsonProperty("ceiling")]
         public bool Ceiling { get; set; }
     }
 
-    public partial class ConditionsVisibility
+    public class ConditionsVisibility
     {
         [JsonProperty("distanceSm")]
         public double DistanceSm { get; set; }
@@ -105,13 +102,13 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public long PrevailingVisDistanceQualifier { get; set; }
     }
 
-    public partial class Wind
+    public class Wind
     {
         [JsonProperty("speedKts")]
-        public long SpeedKts { get; set; }
+        public double SpeedKts { get; set; }
 
         [JsonProperty("direction")]
-        public long Direction { get; set; }
+        public int Direction { get; set; }
 
         [JsonProperty("from")]
         public long From { get; set; }
@@ -120,7 +117,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public bool Variable { get; set; }
     }
 
-    public partial class Forecast
+    public class Forecast
     {
         [JsonProperty("text")]
         public string Text { get; set; }
@@ -141,13 +138,13 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public double Lon { get; set; }
 
         [JsonProperty("elevationFt")]
-        public long ElevationFt { get; set; }
+        public double ElevationFt { get; set; }
 
         [JsonProperty("conditions")]
         public List<Condition> Conditions { get; set; }
     }
 
-    public partial class Condition
+    public class Condition
     {
         [JsonProperty("text")]
         public string Text { get; set; }
@@ -162,7 +159,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public double Lon { get; set; }
 
         [JsonProperty("elevationFt")]
-        public long ElevationFt { get; set; }
+        public double ElevationFt { get; set; }
 
         [JsonProperty("relativeHumidity")]
         public long RelativeHumidity { get; set; }
@@ -201,7 +198,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public string DateEnd { get; set; }
     }
 
-    public partial class ConditionVisibility
+    public class ConditionVisibility
     {
         [JsonProperty("distanceSm")]
         public double DistanceSm { get; set; }
@@ -210,7 +207,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public double PrevailingVisSm { get; set; }
     }
 
-    public partial class ReportWindsAloft
+    public class ReportWindsAloft
     {
         [JsonProperty("lat")]
         public double Lat { get; set; }
@@ -228,7 +225,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public string Source { get; set; }
     }
 
-    public partial class WindsAloftElement
+    public class WindsAloftElement
     {
         [JsonProperty("validTime")]
         public string ValidTime { get; set; }
@@ -240,7 +237,7 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
         public Dictionary<string, WindTemp> WindTemps { get; set; }
     }
 
-    public partial class WindTemp
+    public class WindTemp
     {
         [JsonProperty("directionFromTrue")]
         public long DirectionFromTrue { get; set; }
@@ -265,67 +262,5 @@ namespace Infrastructure.Services.ForeFlightWeatherReportApi
 
         [JsonProperty("icing")]
         public bool Icing { get; set; }
-    }
-
-    public enum Coverage { Bkn, Few, Sct };
-
-    internal static class Converter
-    {
-        public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-        {
-            MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-            DateParseHandling = DateParseHandling.None,
-            Converters =
-            {
-                CoverageConverter.Singleton,
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-            },
-        };
-    }
-
-    internal class CoverageConverter : JsonConverter
-    {
-        public override bool CanConvert(Type t) => t == typeof(Coverage) || t == typeof(Coverage?);
-
-        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.TokenType == JsonToken.Null) return null;
-            var value = serializer.Deserialize<string>(reader);
-            switch (value)
-            {
-                case "bkn":
-                    return Coverage.Bkn;
-                case "few":
-                    return Coverage.Few;
-                case "sct":
-                    return Coverage.Sct;
-            }
-            throw new Exception("Cannot unmarshal type Coverage");
-        }
-
-        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
-        {
-            if (untypedValue == null)
-            {
-                serializer.Serialize(writer, null);
-                return;
-            }
-            var value = (Coverage)untypedValue;
-            switch (value)
-            {
-                case Coverage.Bkn:
-                    serializer.Serialize(writer, "bkn");
-                    return;
-                case Coverage.Few:
-                    serializer.Serialize(writer, "few");
-                    return;
-                case Coverage.Sct:
-                    serializer.Serialize(writer, "sct");
-                    return;
-            }
-            throw new Exception("Cannot marshal type Coverage");
-        }
-
-        public static readonly CoverageConverter Singleton = new CoverageConverter();
     }
 }

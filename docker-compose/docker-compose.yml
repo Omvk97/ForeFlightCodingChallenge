@@ -1,0 +1,26 @@
+version: '2.2'
+services:
+  elasticSearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+    container_name: elasticSearch
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.0
+    container_name: kib01
+    ports:
+      - 5601:5601
+    environment:
+      ELASTICSEARCH _URL: http://elasticSearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticSearch:9200

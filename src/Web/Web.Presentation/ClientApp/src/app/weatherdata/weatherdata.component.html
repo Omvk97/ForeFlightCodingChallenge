@@ -1,1 +1,57 @@
-<h1>{{windSpeedKts}}</h1>
+<form [formGroup]="icaoForm" novalidate (ngSubmit)="getWeather()">
+  <mat-card class="icao-card">
+    <mat-card-header>
+      <mat-card-title
+        >Weather Information for {{ weatherData.icao }}</mat-card-title
+      >
+    </mat-card-header>
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item
+          ><strong>Time:&nbsp;</strong>
+          {{ weatherData.issuedSince }}</mat-list-item
+        ><mat-divider></mat-divider>
+        <mat-list-item
+          ><strong>Wind:&nbsp;</strong> {{ weatherData.windDirection }} at
+          {{ weatherData.windSpeedKts }} kts
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item
+          ><strong>Visibility:&nbsp;</strong> {{ weatherData.visibilityDistanceSm }}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <strong>Temperature:&nbsp;</strong> {{ weatherData.temperature }}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <strong>Dewpoint:&nbsp;</strong> {{ weatherData.dewPoint }}
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <strong>Altimeter:&nbsp;</strong>
+          {{ weatherData.pressureHg }}</mat-list-item
+        >
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <strong>Humidity:&nbsp;</strong> {{ weatherData.humidity }}</mat-list-item
+        >
+        <mat-divider></mat-divider>
+        <mat-list-item
+          ><strong>Density Altitude:&nbsp;</strong>
+          {{ weatherData.densityAltitudeFt }}</mat-list-item
+        >
+      </mat-list>
+      <mat-list-item>
+        <mat-form-field style="margin-left: 16px; margin-right: 16px">
+          <mat-label>ICAO Code</mat-label>
+          <input matInput placeholder="EKOD" formControlName="icao" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit">
+          Weather Lookup
+        </button>
+      </mat-list-item>
+    </mat-card-content>
+  </mat-card>
+</form>
+<div></div>

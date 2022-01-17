@@ -1,10 +1,13 @@
+using Application;
+using FluentValidation.AspNetCore;
+using Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Presentation.Filters;
 
 namespace Presentation
 {
@@ -20,11 +23,28 @@ namespace Presentation
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
+            services.AddApplication();
+            services.AddInfrastructure();
+
+            services.AddHttpContextAccessor();
+
+            services.AddCors(options =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                options.AddPolicy("AllowAngularWebDevelopment",
+                    builder => { builder.WithOrigins("localhost:4200"); }
+                );
+            });
+
+            services.AddControllersWithViews(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); })
+                .AddFluentValidation(x => x.AutomaticValidationEnabled = false)
+                .AddNewtonsoftJson();
+
+            // In production, the Angular files will be served from this directory
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
+
+            services.AddOpenApiDocument(configure =>
+            {
+                configure.Title = "ForeFlight Coding Challenge - Oliver Marco van Komen";
             });
         }
 
@@ -32,9 +52,7 @@ namespace Presentation
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
             {
                 app.UseExceptionHandler("/Error");
@@ -45,11 +63,18 @@ namespace Presentation
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
-            {
                 app.UseSpaStaticFiles();
-            }
+
+            app.UseSwaggerUi3(settings =>
+            {
+                settings.Path = "/api";
+                settings.DocumentPath = "/api/specification.json";
+            });
 
             app.UseRouting();
+            
+            if (env.IsDevelopment())
+                app.UseCors("AllowAngularWebDevelopment");  
 
             app.UseEndpoints(endpoints =>
             {
@@ -60,14 +85,12 @@ namespace Presentation
 
             app.UseSpa(spa =>
             {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
-
                 spa.Options.SourcePath = "ClientApp";
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    // spa.UseAngularCliServer("ng serve");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
         }
